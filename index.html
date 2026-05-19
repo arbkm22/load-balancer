@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="light h-full" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AeroBalance Pro</title>
+    
+    <!-- Tailwind via CDN for exact replication -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: '#006B5E', // From stitch_screen
+                container: '#76F8E1',
+              },
+              'on-primary': {
+                DEFAULT: '#ffffff',
+                container: '#00201B',
+              },
+              surface: {
+                DEFAULT: '#F8FAF9',
+                container: '#EBEFEB',
+                'container-high': '#E5E9E5',
+                'container-highest': '#E0E3E0',
+                variant: '#DBE5E0',
+              },
+              'on-surface': {
+                DEFAULT: '#191C1B',
+                variant: '#3F4946',
+              },
+              outline: {
+                DEFAULT: '#6F7976',
+                variant: '#BEC9C5',
+              },
+              success: '#006D40',
+              'success-container': '#93F8B9',
+              'on-success-container': '#002110',
+              // Merged colors from input_screen to ensure everything works
+              "on-secondary-fixed": "#131b2e",
+              "secondary-container": "#dae2fd",
+              "error": "#ba1a1a",
+              "tertiary-fixed": "#e0e3e5",
+              "on-primary-fixed": "#00201d",
+              "on-tertiary-container": "#fbfdff",
+              "surface-tint": "#006a61",
+              "primary-fixed": "#89f5e7",
+              "on-primary-fixed-variant": "#005049",
+              "on-secondary-fixed-variant": "#3f465c",
+              "inverse-primary": "#6bd8cb",
+              "tertiary-fixed-dim": "#c4c7c9",
+              "surface-container-low": "#eff4ff",
+              "surface-bright": "#f8f9ff",
+              "inverse-on-surface": "#eaf1ff",
+              "background": "#f8f9ff",
+              "on-error-container": "#93000a",
+              "primary-fixed-dim": "#6bd8cb",
+              "secondary-fixed-dim": "#bec6e0",
+              "on-tertiary-fixed-variant": "#444749",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#cbdbf5",
+              "on-secondary-container": "#5c647a",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#dae2fd",
+              "tertiary": "#595c5e",
+              "secondary": "#565e74",
+              "on-tertiary": "#ffffff",
+              "on-error": "#ffffff",
+              "tertiary-container": "#727577",
+              "on-background": "#0b1c30",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed": "#191c1e"
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+            spacing: {
+              "gutter": "20px",
+              "md": "16px",
+              "base": "4px",
+              "container-max": "1280px",
+              "xs": "4px",
+              "xl": "48px",
+              "lg": "24px",
+              "sm": "8px"
+            },
+            fontFamily: {
+              headline: ["Public Sans", "sans-serif"],
+              display: ["Public Sans", "sans-serif"],
+              body: ["Public Sans", "sans-serif"],
+              label: ["Public Sans", "sans-serif"],
+              "headline-sm": ["Inter"],
+              "data-mono-md": ["JetBrains Mono"],
+              "display-lg": ["Inter"],
+              "headline-md": ["Inter"],
+              "data-mono-lg": ["JetBrains Mono"],
+              "label-caps": ["Inter"],
+              "body-sm": ["Inter"],
+              "body-md": ["Inter"]
+            },
+            fontSize: {
+              'headline-md': ['1.75rem', { lineHeight: '2.25rem' }],
+              'headline-sm': ['1.5rem', { lineHeight: '2rem' }],
+              'title-lg': ['1.375rem', { lineHeight: '1.75rem' }],
+              'title-md': ['1rem', { lineHeight: '1.5rem' }],
+              'body-lg': ['1rem', { lineHeight: '1.5rem' }],
+              'body-md': ['0.875rem', { lineHeight: '1.25rem' }],
+              'label-lg': ['0.875rem', { lineHeight: '1.25rem' }],
+              'label-caps': ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.05em' }],
+              "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+              "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+              "data-mono-lg": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-background text-on-background font-body-md"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
