@@ -162,7 +162,7 @@ function App() {
                       onClick={handleBalance}
                       className="flex-1 md:flex-none px-lg py-sm bg-primary text-on-primary rounded font-headline-sm text-headline-sm hover:opacity-90 transition-colors shadow-sm px-6 py-2"
                     >
-                      Review Distribution
+                      Calculate Load
                     </button>
                   </div>
                 </div>
