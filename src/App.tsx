@@ -12,7 +12,17 @@ const INITIAL_HAMMERS: Hammer[] = [
   { serial: 21, weight: 40.85 }, { serial: 22, weight: 41.70 }, { serial: 23, weight: 42.06 }, { serial: 24, weight: 40.90 }
 ];
 
-type View = 'calculator' | 'results' | 'configurations';
+export interface HistoryRecord {
+  id: string;
+  timestamp: string;
+  totalWeight: number;
+  variance: number;
+  itemCount: number;
+  hammers: Hammer[];
+  result: BalanceResult;
+}
+
+type View = 'calculator' | 'results' | 'history' | 'configurations';
 
 function App() {
   const [hammers, setHammers] = useState<Hammer[]>(INITIAL_HAMMERS);
@@ -21,6 +31,23 @@ function App() {
   const [currentView, setCurrentView] = useState<View>('calculator');
   const [configCount, setConfigCount] = useState<number>(hammers.length);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [history, setHistory] = useState<HistoryRecord[]>(() => {
+    try {
+      const stored = localStorage.getItem('aerobance_history');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const saveHistory = (newHistory: HistoryRecord[]) => {
+    setHistory(newHistory);
+    try {
+      localStorage.setItem('aerobance_history', JSON.stringify(newHistory));
+    } catch (e) {
+      console.error('Failed to save history to localStorage', e);
+    }
+  };
 
   const handleWeightChange = (serial: number, weight: string) => {
     const val = parseFloat(weight) || 0;
@@ -34,6 +61,17 @@ function App() {
       const res = balanceHammers(hammers);
       setResult(res);
       setIsBalancing(false);
+
+      const newRecord: HistoryRecord = {
+        id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
+        timestamp: new Date().toLocaleString(),
+        totalWeight: hammers.reduce((s, h) => s + h.weight, 0),
+        variance: res.bestDiff,
+        itemCount: hammers.length,
+        hammers: [...hammers],
+        result: res
+      };
+      saveHistory([newRecord, ...history]);
     }, 400);
   };
   
@@ -103,6 +141,7 @@ function App() {
         <div className="flex flex-col gap-2 flex-grow">
           {renderNavButton('calculator', 'calculate', 'Calculator')}
           {renderNavButton('results', 'analytics', 'Results')}
+          {renderNavButton('history', 'history', 'History')}
           {renderNavButton('configurations', 'settings_suggest', 'Configurations')}
         </div>
         <div className="mt-auto border-t border-outline-variant pt-4 px-4 flex items-center gap-3">
@@ -322,6 +361,95 @@ function App() {
                   </>
                 )}
               </>
+            )}
+
+            {/* HISTORY VIEW */}
+            {currentView === 'history' && (
+              <div className="w-full max-w-container-max flex flex-col gap-lg">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
+                  <div>
+                    <h2 className="font-display-lg text-display-lg text-on-background mb-xs">Calculation History</h2>
+                    <p className="font-body-md text-body-md text-on-surface-variant">Review and recall past load balancing runs.</p>
+                  </div>
+                  {history.length > 0 && (
+                    <div className="mt-4 md:mt-0">
+                      <button 
+                        onClick={() => {
+                          if (window.confirm("Are you sure you want to clear all history?")) {
+                            saveHistory([]);
+                          }
+                        }}
+                        className="px-lg py-sm border border-error text-error rounded font-headline-sm text-headline-sm hover:bg-error-container hover:text-on-error-container transition-colors px-6 py-2"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {history.length === 0 ? (
+                  <div className="card empty-state mt-6 bg-surface border border-outline-variant rounded-xl p-16 text-center shadow-sm flex flex-col items-center justify-center">
+                    <span className="material-symbols-outlined text-6xl text-outline-variant mb-4">receipt_long</span>
+                    <h3 className="font-headline-md text-on-surface mb-2">No History Records Found</h3>
+                    <p className="text-on-surface-variant">Run the weight balancing calculator to see history records here.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    {history.map((record) => (
+                      <div key={record.id} className="bg-surface rounded-2xl border border-outline-variant/60 shadow-sm flex flex-col overflow-hidden hover:border-primary/40 transition-colors">
+                        <div className="p-4 border-b border-outline-variant/40 bg-surface-container-highest/30 flex justify-between items-center">
+                          <div className="flex items-center gap-2 text-on-surface">
+                            <span className="material-symbols-outlined text-primary text-xl">history</span>
+                            <span className="font-semibold text-sm">{record.timestamp}</span>
+                          </div>
+                          <button 
+                            onClick={() => saveHistory(history.filter(h => h.id !== record.id))}
+                            className="text-on-surface-variant hover:text-error transition-colors"
+                            title="Delete record"
+                          >
+                            <span className="material-symbols-outlined text-xl">delete</span>
+                          </button>
+                        </div>
+                        <div className="p-5 flex-1 flex flex-col gap-3">
+                          <div className="flex justify-between items-end">
+                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Total Payload</span>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-2xl font-black text-on-surface">{record.totalWeight.toFixed(2)}</span>
+                              <span className="text-xs font-medium text-on-surface-variant">kg</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center bg-surface-container-low p-2 rounded">
+                            <span className="text-xs text-on-surface-variant">Items: <strong className="text-on-surface">{record.itemCount}</strong></span>
+                            <span className="text-xs text-on-surface-variant">Variance: <strong className="text-on-surface">{record.variance.toFixed(3)} kg</strong></span>
+                          </div>
+                        </div>
+                        <div className="p-4 border-t border-outline-variant/40 flex gap-2">
+                          <button 
+                            onClick={() => {
+                              setHammers(record.hammers);
+                              setResult(record.result);
+                              setCurrentView('calculator');
+                            }}
+                            className="flex-1 px-3 py-2 border border-outline text-on-surface-variant rounded font-medium text-sm hover:bg-surface-container-low transition-colors flex items-center justify-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-sm">edit</span> Edit
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setHammers(record.hammers);
+                              setResult(record.result);
+                              setCurrentView('results');
+                            }}
+                            className="flex-1 px-3 py-2 bg-primary text-on-primary rounded font-medium text-sm hover:opacity-90 transition-colors shadow-sm flex items-center justify-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-sm">analytics</span> Results
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
 
             {/* CONFIGURATIONS VIEW */}
